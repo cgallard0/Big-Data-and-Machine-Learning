@@ -1,0 +1,64 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.9.11)  20 OCT 2026 20:29
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**main.tex
+(./main.tex
+LaTeX2e <2021-11-15> patch level 1
+L3 programming layer <2022-01-21>
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2021/10/04 v1.4n Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size11.clo
+File: size11.clo 2021/10/04 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count185
+\c@section=\count186
+\c@subsection=\count187
+\c@subsubsection=\count188
+\c@paragraph=\count189
+\c@subparagraph=\count190
+\c@figure=\count191
+\c@table=\count192
+\abovecaptionskip=\skip47
+\belowcaptionskip=\skip48
+\bibindent=\dimen138
+)
+(/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty
+Package: inputenc 2021/02/14 v1.3d Input encoding file
+\inpenc@prehook=\toks16
+\inpenc@posthook=\toks17
+)
+(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
+)
+(/usr/share/texlive/texmf-dist/tex/generic/babel/babel.sty
+Package: babel 2022/01/26 3.70 The Babel package
+\babel@savecnt=\count193
+\U@D=\dimen139
+\l@unhyphenated=\language3
+
+(/usr/share/texlive/texmf-dist/tex/generic/babel/txtbabel.def)
+\bbl@readstream=\read2
+\bbl@dirlevel=\count194
+
+
+! Package babel Error: Unknown option 'spanish'. Either you misspelled it
+(babel)                or the language definition file spanish.ldf was not foun
+d.
+
+See the babel package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.4254 \ProcessOptions*
+                        
+Here is how much of TeX's memory you used:
+ 1364 strings out of 480247
+ 20960 string characters out of 5896151
+ 319386 words of memory out of 5000000
+ 19380 multiletter control sequences out of 15000+600000
+ 470328 words of font info for 30 fonts, out of 8000000 for 9000
+ 14 hyphenation exceptions out of 8191
+ 35i,0n,48p,165b,38s stack positions out of 5000i,500n,10000p,200000b,80000s
+
+!  ==> Fatal error occurred, no output PDF file produced!

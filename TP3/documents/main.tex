@@ -1,0 +1,424 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noshorthands,es-nodecimaldot]{babel}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage[hidelinks]{hyperref}
+
+% Las figuras y tablas se generan en ../output/
+\graphicspath{{../output/}}
+
+\setlist[itemize]{itemsep=2pt,topsep=4pt}
+\captionsetup{font=small,labelfont=bf}
+
+\begin{document}
+
+\begin{titlepage}
+\centering
+\vspace*{3cm}
+
+{\LARGE\bfseries Trabajo Práctico N$^{\circ}$3\par}
+\vspace{0.4cm}
+{\large (Semestre de Otoño 2025)\par}
+\vspace{0.3cm}
+{\large\bfseries Big Data\par}
+
+\vfill
+
+{\large Profesora: María Noelia Romero\par}
+\vspace{0.2cm}
+{\large Tutor: Tomás Pacheco\par}
+\vspace{0.2cm}
+{\large Alumnos: Catalina Gallardo, Manuel Elorga\par}
+
+\vfill
+\end{titlepage}
+
+% ===============================================================
+\section{Un poco más de estadística descriptiva}
+% ===============================================================
+
+\subsection*{Ejercicio 1}
+
+\begin{itemize}
+  \item \textbf{Sexo (CH04)}: indica el sexo del individuo. Es útil para considerar posibles
+        disparidades de género en el acceso y la permanencia en el mercado laboral.
+
+  \item \textbf{Edad (CH06)}: registra la edad del individuo. Es relevante para distinguir
+        entre población activa e inactiva y para detectar patrones etarios en la desocupación.
+
+  \item \textbf{Estado civil (CH07)}: refleja la situación conyugal del individuo. Puede ser
+        relevante si la desocupación afecta de forma distinta a personas solteras, casadas,
+        divorciadas o viudas.
+
+  \item \textbf{Lugar de residencia hace cinco años (CH16)}: informa dónde vivía la persona
+        cinco años antes de la encuesta. Permite identificar movilidad geográfica, dentro del
+        país o desde el exterior, lo cual puede incidir en las posibilidades de inserción
+        laboral, el acceso a redes de empleo y la adaptación al mercado de trabajo local.
+
+  \item \textbf{Cantidad de personas en el hogar (PERSONAS\_HOGAR)}: indica cuántas personas
+        viven en el hogar del encuestado. Puede estar relacionada con la presión económica del
+        hogar y con la necesidad de que sus miembros participen del mercado laboral. Como se
+        ve en la Figura~\ref{fig:personas}, se presenta una distribución sesgada hacia la
+        derecha, en la que los hogares tienen entre dos y seis miembros. Sin embargo, existen
+        valores extremos que aumentan la varianza.
+
+  \item \textbf{Edad al cuadrado (EDAD2)}: corresponde al cuadrado de la edad del individuo.
+        Permite capturar posibles efectos no lineales de la edad sobre la condición de
+        ocupación, como diferencias entre jóvenes, adultos y personas próximas a la
+        jubilación. Como se ve en la Figura~\ref{fig:edad2}, hay una curtosis alta y una cola
+        larga, lo que confirma que la muestra es relativamente joven.
+
+  \item \textbf{Obra social (OBRA\_SOCIAL)}: variable binaria que toma valor 0 si la persona
+        depende total o parcialmente de los servicios públicos de salud. Puede ser un buen
+        predictor de ocupación, ya que contar con obra social suele estar vinculado a una
+        relación laboral formal. En la Figura~\ref{fig:obra} se visualiza que aproximadamente
+        el 60\% de los individuos carece de obra social privada.
+
+  \item \textbf{Años de educación (EDUCACION)}: estima la cantidad de años de educación
+        formal del individuo. Fue ajustada para reducir valores perdidos. Esta variable es
+        clave, ya que el nivel educativo influye fuertemente en las oportunidades laborales y
+        en la probabilidad de inserción en el mercado formal. En la
+        Figura~\ref{fig:educacion} se puede ver un patrón en las personas que tienen la
+        primaria completa, la secundaria completa y estudios superiores, lo que evidencia la
+        heterogeneidad en el capital humano.
+
+  \item \textbf{Interacción entre edad y educación (EDADxEDUCACION)}: representa el producto
+        entre la edad y los años de educación. Busca capturar efectos combinados, como que
+        una mayor edad acompañada de mayor nivel educativo se traduzca en más experiencia y,
+        por lo tanto, en una mayor probabilidad de empleo. La Figura~\ref{fig:edadxeduc}
+        muestra que la interacción entre los valores medianos de los ocupados es más alta que
+        la de los desocupados, lo que sugiere que una mayor formación y experiencia
+        incrementan la empleabilidad.
+
+  \item \textbf{Educación en colegio privado (COLEGIO\_PRIVADO)}: variable binaria que indica
+        si el individuo asistió a una institución educativa privada. Puede utilizarse como
+        \textit{proxy} del nivel socioeconómico del hogar de origen, lo que incide en las
+        trayectorias educativas y laborales futuras. En la Figura~\ref{fig:privado} vemos que
+        la gran mayoría asistió a una institución educativa pública: solo el 10\% de la
+        muestra reporta haber asistido a un colegio privado.
+\end{itemize}
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{personas-hogar}.png}
+    \caption{Cantidad de personas en el hogar.}
+    \label{fig:personas}
+  \end{minipage}\hfill
+  \begin{minipage}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{edad2}.png}
+    \caption{Distribución de la edad al cuadrado.}
+    \label{fig:edad2}
+  \end{minipage}
+
+  \vspace{0.6cm}
+
+  \begin{minipage}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{obra-social}.png}
+    \caption{Cobertura de obra social.}
+    \label{fig:obra}
+  \end{minipage}\hfill
+  \begin{minipage}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{educacion}.png}
+    \caption{Años de educación.}
+    \label{fig:educacion}
+  \end{minipage}
+
+  \vspace{0.6cm}
+
+  \begin{minipage}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{edadxeducacion}.png}
+    \caption{Interacción entre edad y educación.}
+    \label{fig:edadxeduc}
+  \end{minipage}\hfill
+  \begin{minipage}{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{colegio-privado}.png}
+    \caption{Asistencia a colegio privado.}
+    \label{fig:privado}
+  \end{minipage}
+\end{figure}
+
+% ===============================================================
+\section{Enfoque de validación}
+% ===============================================================
+
+\subsection*{Ejercicio 2}
+
+El Cuadro~\ref{tab:medias} presenta un análisis de las diferencias de medias entre la base de
+entrenamiento (\textit{train}) y la base de prueba (\textit{test}) para las variables
+elegidas, en 2004 y 2024. El objetivo es verificar que la partición de los datos realizada
+con \texttt{train\_test\_split} fue aleatoria y que ambas muestras son comparables.
+
+Las diferencias de medias entre \textit{train} y \textit{test} son en general muy pequeñas,
+lo cual indica un buen balance. Por ejemplo, variables como CH04 (sexo), CH07 (estado civil),
+PERSONAS\_HOGAR, OBRA\_SOCIAL y COLEGIO\_PRIVADO presentan diferencias nulas o cercanas a
+cero, lo cual es esperable en una partición aleatoria.
+
+En 2004, algunas variables muestran diferencias algo mayores, como EDAD2 ($-54.58$) y
+EDUCACION ($0.41$). No obstante, en el caso de EDAD2 esto puede explicarse por una pequeña
+diferencia en la edad promedio, amplificada por la transformación cuadrática. En cuanto a
+EDUCACION, si bien la diferencia es la más elevada en términos absolutos, sigue siendo pequeña
+y no se considera problemática.
+
+En 2024 las diferencias son aún menores. La mayor corresponde a CH06 (edad), con $-0.44$,
+mientras que EDAD2 y EDUCACION presentan diferencias de $-11.72$ y $-0.09$ respectivamente,
+todas dentro de márgenes aceptables. Variables como EDADxEDUCACION ($-4.06$) también muestran
+ligeras diferencias, pero no significativas.
+
+En conclusión, todas las diferencias observadas son pequeñas y no estadísticamente
+significativas. Esto confirma que la división entre las bases de entrenamiento y prueba fue
+adecuada y que ambas muestras son representativas del total. Por lo tanto, pueden ser
+utilizadas sin inconvenientes en el desarrollo y la validación de modelos predictivos de la
+condición de ocupación.
+
+\begin{table}[H]
+  \centering
+  \caption{Medias y diferencias entre las muestras de entrenamiento y testeo, 2004 y 2024.}
+  \label{tab:medias}
+  \small
+  \begin{tabular}{lrrrrrr}
+    \toprule
+    & \multicolumn{3}{c}{\textbf{2004}} & \multicolumn{3}{c}{\textbf{2024}} \\
+    \cmidrule(lr){2-4}\cmidrule(lr){5-7}
+    Variable & Media train & Media test & Diferencia & Media train & Media test & Diferencia \\
+    \midrule
+    CONSTANTE        &    1.00 &    1.00 &   0.00 &    1.00 &    1.00 &   0.00 \\
+    SEXO             &    1.52 &    1.52 &   0.00 &    1.52 &    1.53 &  -0.01 \\
+    EDAD             &   31.29 &   31.61 &  -0.32 &   36.22 &   36.66 &  -0.44 \\
+    ESTADO CIVIL     &    3.67 &    3.63 &   0.04 &    3.55 &    3.51 &   0.04 \\
+    DONDE VIVE       &    1.47 &    1.50 &  -0.03 &    1.31 &    1.26 &   0.05 \\
+    PERSONAS HOGAR   &    4.83 &    4.88 &  -0.04 &    4.06 &    4.11 &  -0.05 \\
+    EDAD2            & 1430.17 & 1484.76 & -54.58 & 1834.88 & 1846.60 & -11.72 \\
+    OBRA SOCIAL      &    0.56 &    0.56 &  -0.00 &    0.65 &    0.64 &   0.01 \\
+    EDUCACION        &    7.92 &    7.51 &   0.41 &    9.06 &    9.15 &  -0.09 \\
+    EDADxEDUCACION   &  279.93 &  273.28 &   6.64 &  367.69 &  371.75 &  -4.06 \\
+    COLEGIO PRIVADO  &    0.06 &    0.05 &   0.01 &    0.06 &    0.06 &   0.00 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% ===============================================================
+\section{Métodos de clasificación y performance}
+% ===============================================================
+
+\subsection*{Ejercicio 3}
+
+Para 2004, el Cuadro~\ref{tab:metricas04} reporta el \textit{accuracy} y el AUC de cada
+modelo, el Cuadro~\ref{tab:cm04} las matrices de confusión y la Figura~\ref{fig:roc04} las
+curvas ROC.
+
+\begin{table}[H]
+  \centering
+  \caption{Métricas de desempeño, 2004.}
+  \label{tab:metricas04}
+  \begin{tabular}{lrr}
+    \toprule
+    Modelo & Accuracy & AUC \\
+    \midrule
+    Regresión logística                      & 0.9544 & 0.7631 \\
+    Análisis discriminante lineal (LDA)      & 0.9544 & 0.7643 \\
+    Análisis discriminante cuadrático (QDA)  & 0.7630 & 0.7508 \\
+    $K$-vecinos más cercanos ($K=5$)         & 0.9509 & 0.5829 \\
+    Naive Bayes                              & 0.8252 & 0.7178 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Matrices de confusión, 2004.}
+  \label{tab:cm04}
+  \begin{tabular}{lcccc}
+    \toprule
+    & \multicolumn{2}{c}{Real 0} & \multicolumn{2}{c}{Real 1} \\
+    \cmidrule(lr){2-3}\cmidrule(lr){4-5}
+    Modelo & Pred 0 & Pred 1 & Pred 0 & Pred 1 \\
+    \midrule
+    Regresión logística              & 1381 &   0 & 66 &  0 \\
+    LDA                              & 1381 &   0 & 66 &  0 \\
+    QDA                              & 1065 & 316 & 27 & 39 \\
+    $K$-vecinos ($K=5$)              & 1375 &   6 & 65 &  1 \\
+    Naive Bayes                      & 1162 & 219 & 34 & 32 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{reg-log-2004}.png}\\[-2pt]
+    {\scriptsize Regresión logística}
+  \end{minipage}\hfill
+  \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{LDA-2004}.png}\\[-2pt]
+    {\scriptsize LDA}
+  \end{minipage}\hfill
+  \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{QDA-2004}.png}\\[-2pt]
+    {\scriptsize QDA}
+  \end{minipage}
+
+  \vspace{0.4cm}
+
+  \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{KNN-2004}.png}\\[-2pt]
+    {\scriptsize $K$-vecinos ($K=5$)}
+  \end{minipage}\hfill
+  \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{NB-2004}.png}\\[-2pt]
+    {\scriptsize Naive Bayes}
+  \end{minipage}\hfill
+  \begin{minipage}{0.32\textwidth}~\end{minipage}
+
+  \caption{Curvas ROC, 2004.}
+  \label{fig:roc04}
+\end{figure}
+
+Para 2024, el Cuadro~\ref{tab:metricas24} reporta las métricas, el Cuadro~\ref{tab:cm24} las
+matrices de confusión y la Figura~\ref{fig:roc24} las curvas ROC.
+
+\begin{table}[H]
+  \centering
+  \caption{Métricas de desempeño, 2024.}
+  \label{tab:metricas24}
+  \begin{tabular}{lrr}
+    \toprule
+    Modelo & Accuracy & AUC \\
+    \midrule
+    Regresión logística                      & 0.9815 & 0.8677 \\
+    Análisis discriminante lineal (LDA)      & 0.9815 & 0.8670 \\
+    Análisis discriminante cuadrático (QDA)  & 0.8234 & 0.8121 \\
+    $K$-vecinos más cercanos ($K=5$)         & 0.9815 & 0.5262 \\
+    Naive Bayes                              & 0.8647 & 0.7775 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Matrices de confusión, 2024.}
+  \label{tab:cm24}
+  \begin{tabular}{lcccc}
+    \toprule
+    & \multicolumn{2}{c}{Real 0} & \multicolumn{2}{c}{Real 1} \\
+    \cmidrule(lr){2-3}\cmidrule(lr){4-5}
+    Modelo & Pred 0 & Pred 1 & Pred 0 & Pred 1 \\
+    \midrule
+    Regresión logística              & 1328 &   0 & 25 &  0 \\
+    LDA                              & 1328 &   0 & 25 &  0 \\
+    QDA                              & 1096 & 232 &  7 & 18 \\
+    $K$-vecinos ($K=5$)              & 1328 &   0 & 25 &  0 \\
+    Naive Bayes                      & 1155 & 173 & 10 & 15 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{reg-log-2024}.png}\\[-2pt]
+    {\scriptsize Regresión logística}
+  \end{minipage}\hfill
+  \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{LDA-2024}.png}\\[-2pt]
+    {\scriptsize LDA}
+  \end{minipage}\hfill
+  \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{QDA-2024}.png}\\[-2pt]
+    {\scriptsize QDA}
+  \end{minipage}
+
+  \vspace{0.4cm}
+
+  \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{KNN-2024}.png}\\[-2pt]
+    {\scriptsize $K$-vecinos ($K=5$)}
+  \end{minipage}\hfill
+  \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{NB-2024}.png}\\[-2pt]
+    {\scriptsize Naive Bayes}
+  \end{minipage}\hfill
+  \begin{minipage}{0.32\textwidth}~\end{minipage}
+
+  \caption{Curvas ROC, 2024.}
+  \label{fig:roc24}
+\end{figure}
+
+\subsection*{Ejercicio 4}
+
+Para determinar qué método predice mejor en cada año es importante analizar varias métricas
+que reflejan el desempeño del modelo, sobre todo considerando que la clase desocupado es
+minoritaria y los datos están desbalanceados. Las métricas más relevantes para esta tarea son
+el \textit{recall}, la precisión, el F1-score, el área bajo la curva ROC y la matriz de
+confusión. Otra medida relevante en este sentido es el error cuadrático medio (MSE), que
+indica los errores cometidos en la predicción.
+
+En 2004, los métodos de regresión logística y análisis discriminante lineal tienen un
+\textit{accuracy} alto (aproximadamente 95\%) y alta precisión, pero un \textit{recall} de 0
+para la clase desocupado, ya que nunca predicen 1. El método de vecinos más cercanos también
+presenta un \textit{recall} muy bajo, casi nulo. El MSE más bajo entre los modelos corresponde
+a la regresión logística; sin embargo, esto se debe a que el modelo nunca predice 1, por lo
+que sus únicos errores son todos los desocupados, a los que asigna la categoría de no
+desocupados.
+
+Por otro lado, Naive Bayes muestra un \textit{recall} de 0.485 y un F1-score de 0.202, lo que
+refleja un mejor equilibrio entre detectar desocupados y evitar falsos positivos que los
+métodos anteriores. Sin embargo, el método que logra el mejor \textit{recall} es QDA, con
+0.591: identifica un mayor porcentaje de desocupados, aunque su precisión es baja y el
+F1-score es moderado, lo que indica que comete más errores clasificando ocupados como
+desocupados. En conclusión, para 2004 el equilibrio entre precisión y \textit{recall} se
+alcanza con Naive Bayes; pero como lo que buscamos es predecir desocupados, QDA parecería ser
+la mejor opción, aunque se cometerán errores de sobrestimación de la desocupación.
+
+En 2024, nuevamente la regresión logística, LDA y KNN presentan un \textit{accuracy} muy alto
+(cerca del 98\%) pero un \textit{recall} igual a 0 para la clase desocupado, por lo que nunca
+predicen 1. Naive Bayes mejora el \textit{recall} a 0.6 con un F1-score de 0.141, lo que
+muestra una mejor capacidad para detectar desocupados que los tres anteriores. De nuevo, la
+regresión logística tiene el menor MSE. Al igual que en 2004, QDA tiene el \textit{recall} más
+alto, de 0.72, con lo que identifica el 72\% de los desocupados, aunque con un F1-score
+ligeramente menor debido a su baja precisión. Por lo tanto, en 2024 QDA es el método que mejor
+detecta la clase desocupado debido a su alto \textit{recall}, mientras que Naive Bayes ofrece
+un mejor balance entre precisión y \textit{recall}.
+
+En problemas con clases desbalanceadas, como este, el \textit{recall} y el F1-score son
+métricas más informativas que el \textit{accuracy}, ya que este último puede ser engañoso si
+el modelo predice principalmente la clase mayoritaria.
+
+\subsection*{Ejercicio 5}
+
+Al no tener observaciones de la base \texttt{norespondieron} en 2004, predecimos únicamente en
+2024. Vamos a utilizar dos métodos: QDA, que es el mejor prediciendo desocupados pero
+sobrestima, y la regresión logística, que es la que menor error cuadrático medio tiene pero
+subestima.
+
+El modelo QDA predice que, de los que no respondieron, el 50.0\% serán desocupados. Por otro
+lado, el modelo de regresión logística predice que, de los que no respondieron, el 0\% serán
+desocupados. Vemos que en esta muestra también se cumple que la regresión logística no predice
+ningún desocupado y que QDA, probablemente, sobrestima. Es importante considerar que estas
+estimaciones no son muy representativas, ya que la muestra tiene solo seis observaciones.
+
+\end{document}

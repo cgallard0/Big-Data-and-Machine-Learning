@@ -1,0 +1,209 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noshorthands,es-nodecimaldot]{babel}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage[hidelinks]{hyperref}
+
+% Las figuras y tablas se generan en ../output/
+\graphicspath{{../output/}}
+
+\setlist[itemize]{itemsep=2pt,topsep=4pt}
+\captionsetup{font=small,labelfont=bf}
+
+\begin{document}
+
+\begin{titlepage}
+\centering
+\vspace*{3cm}
+
+{\LARGE\bfseries Trabajo Práctico N$^{\circ}$5\par}
+\vspace{0.4cm}
+{\large (Semestre de Otoño 2025)\par}
+\vspace{0.3cm}
+{\large\bfseries Big Data\par}
+
+\vfill
+
+{\large Profesora: María Noelia Romero\par}
+\vspace{0.2cm}
+{\large Tutor: Tomás Pacheco\par}
+\vspace{0.2cm}
+{\large Alumna: Catalina Gallardo\par}
+
+\vfill
+\end{titlepage}
+
+% ===============================================================
+\section*{Construcción de funciones y sistematización de métodos}
+% ===============================================================
+
+El análisis de los modelos de clasificación aplicados a los datos de 2004 y 2024 revela
+patrones consistentes y algunas diferencias menores entre ambos años. En términos generales,
+los modelos presentan un buen desempeño en exactitud, pero serias limitaciones para
+identificar correctamente la clase minoritaria (desocupados), que es la variable de interés.
+
+En 2004, los modelos Logit, LDA, LASSO, AdaBoost y Random Forest no logran predecir
+correctamente ningún caso de desocupación. La única excepción parcial es KNN, que identifica
+dos casos positivos, aunque a costa de siete falsos positivos. Esta situación se refleja en
+las métricas: el \textit{accuracy} (0.95) y el MSE (0.05) se mantienen constantes en casi
+todos los modelos, pero tanto la precisión como el \textit{recall} son nulos, salvo en el caso
+de KNN. El AUC varía ligeramente: alcanza 0.77 con Random Forest, 0.76 con Logit y LDA, y
+desciende a 0.50 con AdaBoost, lo que refleja la falta de capacidad discriminativa de este
+último. Todos estos resultados se resumen en el Cuadro~\ref{tab:res2004}.
+
+En 2024, los valores de exactitud mejoran levemente a 0.98 y el MSE disminuye a 0.02, lo que
+podría interpretarse como una mejora global en la capacidad predictiva. Sin embargo, esta
+mejora se debe a la sobrerrepresentación de la clase negativa, ya que ningún modelo logra
+clasificar correctamente a los individuos desocupados. En todos los casos, la matriz de
+confusión presenta ceros en la columna de verdaderos positivos, por lo que las métricas de
+precisión y \textit{recall} permanecen en cero. No obstante, se observan valores elevados de
+AUC en algunos modelos: Logit (0.87), LDA (0.86), LASSO (0.84) y Random Forest (0.81). Esto
+indica que los modelos sí asignan probabilidades distintas a las dos clases, pero que bajo el
+umbral de decisión estándar (0.5) no se produce una clasificación efectiva. Los resultados se
+detallan en el Cuadro~\ref{tab:res2024}.
+
+Las Figuras~\ref{fig:roc2004} y~\ref{fig:roc2024} presentan las curvas ROC correspondientes a
+cada año. A pesar de que algunos modelos logran áreas bajo la curva razonables, estos valores
+no se traducen en un buen desempeño clasificador, lo cual sugiere que el problema central
+reside en el severo desbalance de clases. Este desbalance dificulta el aprendizaje de patrones
+útiles para identificar la clase minoritaria.
+
+En conclusión, si bien los modelos muestran un buen rendimiento en métricas globales, todos
+fallan en el objetivo principal: detectar a los desocupados. Es posible que se necesite un
+modelo más completo y una base de datos con una mayor cantidad de desocupados ---y un $n$
+mayor en general--- para lograr una mejor predicción.
+
+% ---------------------------------------------------------------
+\begin{table}[H]
+  \centering
+  \caption{Resultados de los modelos para el año 2004.}
+  \label{tab:res2004}
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{llcccccc}
+    \toprule
+    Modelo & Hiperparámetros & Matriz & Acc. & Prec. & Rec. & MSE & AUC \\
+    \midrule
+    LogisticRegression         & penalty=None                                                  & [[1381, 0] [66, 0]] & 0.95 & 0.00 & 0.00 & 0.05 & 0.76 \\
+    LinearDiscriminantAnalysis & ---                                                           & [[1381, 0] [66, 0]] & 0.95 & 0.00 & 0.00 & 0.05 & 0.76 \\
+    KNeighborsClassifier       & n\_neighbors=7                                                & [[1374, 7] [64, 2]] & 0.95 & 0.22 & 0.03 & 0.05 & 0.67 \\
+    LogisticRegression (LASSO) & C=0.1, penalty=l1, solver=liblinear                           & [[1381, 0] [66, 0]] & 0.95 & 0.00 & 0.00 & 0.05 & 0.73 \\
+    RandomForestClassifier     & max\_features=3, max\_samples=0.25, n\_estimators=25          & [[1378, 3] [66, 0]] & 0.95 & 0.00 & 0.00 & 0.05 & 0.77 \\
+    AdaBoostClassifier         & learning\_rate=0.001, n\_estimators=25                        & [[1381, 0] [66, 0]] & 0.95 & 0.00 & 0.00 & 0.05 & 0.50 \\
+    \bottomrule
+  \end{tabular}}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Resultados de los modelos para el año 2024.}
+  \label{tab:res2024}
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{llcccccc}
+    \toprule
+    Modelo & Hiperparámetros & Matriz & Acc. & Prec. & Rec. & MSE & AUC \\
+    \midrule
+    LogisticRegression         & penalty=None                                                  & [[1328, 0] [25, 0]] & 0.98 & 0.00 & 0.00 & 0.02 & 0.87 \\
+    LinearDiscriminantAnalysis & ---                                                           & [[1328, 0] [25, 0]] & 0.98 & 0.00 & 0.00 & 0.02 & 0.86 \\
+    KNeighborsClassifier       & ---                                                           & [[1328, 0] [25, 0]] & 0.98 & 0.00 & 0.00 & 0.02 & 0.69 \\
+    LogisticRegression (LASSO) & C=0.1, penalty=l1, solver=liblinear                           & [[1328, 0] [25, 0]] & 0.98 & 0.00 & 0.00 & 0.02 & 0.84 \\
+    RandomForestClassifier     & max\_features=3, max\_samples=0.25, n\_estimators=75          & [[1328, 0] [25, 0]] & 0.98 & 0.00 & 0.00 & 0.02 & 0.81 \\
+    AdaBoostClassifier         & learning\_rate=0.001, n\_estimators=25                        & [[1328, 0] [25, 0]] & 0.98 & 0.00 & 0.00 & 0.02 & 0.50 \\
+    \bottomrule
+  \end{tabular}}
+\end{table}
+
+\noindent\textit{Nota}: de los dos métodos de boosting evaluados (AdaBoost y Gradient
+Boosting), la función \texttt{evalua\_multiples\_metodos} reporta únicamente el de menor MSE.
+Una celda vacía en la columna de hiperparámetros indica que el modelo se estimó con los
+valores por defecto.
+
+% ---------------------------------------------------------------
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{LogisticRegression_04}.png}\\[-2pt]
+    {\scriptsize Logit}
+  \end{minipage}\hfill
+  \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{LinearDiscriminantAnalysis_04}.png}\\[-2pt]
+    {\scriptsize LDA}
+  \end{minipage}\hfill
+  \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{KNeighborsClassifier_04}.png}\\[-2pt]
+    {\scriptsize KNN}
+  \end{minipage}
+
+  \vspace{0.35cm}
+
+  \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{LogisticRegression(LASSO)_04}.png}\\[-2pt]
+    {\scriptsize LASSO}
+  \end{minipage}\hfill
+  \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{RandomForestClassifier_04}.png}\\[-2pt]
+    {\scriptsize Random Forest}
+  \end{minipage}\hfill
+  \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{AdaBoostClassifier_04}.png}\\[-2pt]
+    {\scriptsize AdaBoost}
+  \end{minipage}
+
+  \caption{Curvas ROC, 2004.}
+  \label{fig:roc2004}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{LogisticRegression_24}.png}\\[-2pt]
+    {\scriptsize Logit}
+  \end{minipage}\hfill
+  \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{LinearDiscriminantAnalysis_24}.png}\\[-2pt]
+    {\scriptsize LDA}
+  \end{minipage}\hfill
+  \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{KNeighborsClassifier_24}.png}\\[-2pt]
+    {\scriptsize KNN}
+  \end{minipage}
+
+  \vspace{0.35cm}
+
+  \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{LogisticRegression(LASSO)_24}.png}\\[-2pt]
+    {\scriptsize LASSO}
+  \end{minipage}\hfill
+  \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{RandomForestClassifier_24}.png}\\[-2pt]
+    {\scriptsize Random Forest}
+  \end{minipage}\hfill
+  \begin{minipage}{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{AdaBoostClassifier_24}.png}\\[-2pt]
+    {\scriptsize AdaBoost}
+  \end{minipage}
+
+  \caption{Curvas ROC, 2024.}
+  \label{fig:roc2024}
+\end{figure}
+
+\end{document}

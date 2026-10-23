@@ -1,0 +1,18 @@
+\begin{tabular}{lllrrrrr}
+\toprule
+Modelo & Híperparametros & Matriz & Acc. & Prec. & Rec. & MSE & AUC \\
+\midrule
+LogisticRegression & penalty = None & [[1381    0]
+ [  66    0]] & 0.950000 & 0.000000 & 0.000000 & 0.050000 & 0.760000 \\
+LinearDiscriminantAnalysis &  & [[1381    0]
+ [  66    0]] & 0.950000 & 0.000000 & 0.000000 & 0.050000 & 0.760000 \\
+KNeighborsClassifier & n_neighbors = 7 & [[1374    7]
+ [  64    2]] & 0.950000 & 0.220000 & 0.030000 & 0.050000 & 0.670000 \\
+LogisticRegression(LASSO) & C = 0.1, penalty = l1, solver = liblinear & [[1381    0]
+ [  66    0]] & 0.950000 & 0.000000 & 0.000000 & 0.050000 & 0.730000 \\
+RandomForestClassifier & max_features = 3, max_samples = 0.25, n_estimators = 25 & [[1378    3]
+ [  66    0]] & 0.950000 & 0.000000 & 0.000000 & 0.050000 & 0.770000 \\
+AdaBoostClassifier & learning_rate = 0.001, n_estimators = 25 & [[1381    0]
+ [  66    0]] & 0.950000 & 0.000000 & 0.000000 & 0.050000 & 0.500000 \\
+\bottomrule
+\end{tabular}

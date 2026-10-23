@@ -1,0 +1,464 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noshorthands,es-nodecimaldot]{babel}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage[hidelinks]{hyperref}
+
+% Las figuras y tablas se generan en ../output/
+\graphicspath{{../output/}}
+
+\setlist[itemize]{itemsep=2pt,topsep=4pt}
+\captionsetup{font=small,labelfont=bf}
+
+\begin{document}
+
+% ---------------------------------------------------------------
+% Portada
+% ---------------------------------------------------------------
+\begin{titlepage}
+\centering
+\vspace*{3cm}
+
+{\LARGE\bfseries Trabajo Práctico N$^{\circ}$1\par}
+\vspace{0.4cm}
+{\large (Semestre de Otoño 2025)\par}
+\vspace{0.3cm}
+{\large\bfseries Big Data\par}
+
+\vfill
+
+{\large Profesora: María Noelia Romero\par}
+\vspace{0.2cm}
+{\large Tutor: Tomás Pacheco\par}
+\vspace{0.2cm}
+{\large Alumnos: Catalina Gallardo, Manuel Elorga\par}
+
+\vfill
+\end{titlepage}
+
+% ===============================================================
+\section*{Parte I: Familiarizándonos con la base EPH}
+% ===============================================================
+
+\subsection*{Ejercicio 1}
+
+Para identificar si una persona está desocupada, el INDEC aplica tres criterios
+fundamentales. El primero es no haber desarrollado ningún tipo de actividad económica
+remunerada. El segundo es haber realizado acciones concretas para obtener trabajo en los
+últimos 30 días, como enviar currículums o registrarse en agencias de empleo. El tercero es
+estar disponible para incorporarse a un empleo en caso de recibir una oferta.
+
+El INDEC diferencia tres grupos dentro del mercado de trabajo: la población ocupada, la
+desocupada y la inactiva. La población ocupada está compuesta por aquellas personas que
+han trabajado al menos una hora en la semana de referencia, ya sea de manera remunerada o
+sin remuneración. La población inactiva está conformada por aquellas personas que no tienen
+empleo y que no lo buscan de manera activa, como estudiantes, jubilados y personas dedicadas
+a tareas del hogar. La población económicamente activa (PEA) incluye tanto a las personas
+ocupadas como a las desocupadas.
+
+La tasa de desocupación se calcula como el porcentaje de la población desocupada sobre la
+población económicamente activa. Este indicador permite evaluar la evolución del mercado
+laboral, ya que da a conocer la cantidad de personas que desean trabajar pero no encuentran
+empleo.
+
+El análisis de la desocupación es fundamental para comprender la dinámica del mercado de
+trabajo y evaluar el impacto de las políticas económicas y sociales. Una tasa de desocupación
+elevada puede reflejar problemas como la falta de oportunidades laborales en diferentes
+sectores o crisis económicas que afectan la demanda de empleo.
+
+\subsection*{Ejercicio 2}
+
+\subsubsection*{Inciso b}
+
+Para el heatmap de valores faltantes elegimos las siguientes diez variables:
+
+\begin{itemize}
+  \item \textbf{CH14}: último año de educación aprobado.
+  \item \textbf{CH15\_COD}: código correspondiente al lugar de nacimiento (provincia o país extranjero).
+  \item \textbf{CH16\_COD}: código correspondiente al lugar de residencia hace cinco años (provincia o país extranjero).
+  \item \textbf{PP03C}: número de empleos o actividades laborales desempeñadas en la última semana.
+  \item \textbf{PP03I}: búsqueda de trabajo adicional en los últimos 30 días.
+  \item \textbf{PP04B\_COD}: código de la actividad económica de la empresa o institución en la que trabaja.
+  \item \textbf{PP06H}: indica si la actividad es un negocio familiar.
+  \item \textbf{PP07A}: tiempo continuo trabajado en el empleo actual.
+  \item \textbf{PP10A}: tiempo de búsqueda de empleo en personas desocupadas.
+  \item \textbf{PP11A}: sector (estatal, privado u otro) del último empleo de los desocupados con trabajo anterior.
+\end{itemize}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{{Heatmap 1}.png}
+  \caption{Heatmap de valores faltantes, antes de la limpieza.}
+  \label{fig:heatmap-pre}
+\end{figure}
+
+La Figura~\ref{fig:heatmap-pre} muestra que faltan bastantes datos sobre el último año
+aprobado, tanto para 2004 como para 2024. Además, se observa una gran cantidad de valores
+faltantes en las variables de código de lugar de nacimiento, de residencia y de actividad
+económica. Por último, se reportan muchos valores faltantes en preguntas realizadas
+únicamente a personas ocupadas o desocupadas en 2024. Esto no era un problema en 2004, lo
+que lleva a pensar que puede haber diferencias en cómo se cargan los datos entre ambos
+relevamientos.
+
+\subsubsection*{Inciso c}
+
+Eliminamos las siguientes observaciones sin sentido:
+
+\begin{itemize}
+  \item En la columna CH06 (edad) existían observaciones con el valor $-1$, que deberían
+        representar ``menor de 1''. Se convirtieron a 0.
+  \item En la columna CH14 (último año aprobado), en la base de 2004 aparecían valores
+        incorrectos (98), los cuales fueron reemplazados por valores nulos. Para 2024, el
+        valor 98 significa ``educación especial''.
+  \item En la columna PP06C (ingresos) se encontraron valores negativos distintos de $-9$
+        (que indica ``no sabe / no contesta''). Los valores $-7$ y $-8$ fueron reemplazados
+        por valores nulos.
+  \item En la columna PP06D (ingresos), al igual que en PP06C, se reemplazaron los valores
+        negativos distintos de $-9$, convirtiendo $-7$ y $-8$ en valores nulos.
+\end{itemize}
+
+Fuera de esos reemplazos, se verificó que todas las columnas tuvieran sus valores dentro del
+rango de respuestas válidas. Entre otros controles, se verificó que la cantidad de horas
+trabajadas en la última semana no excediera las 168 horas que tiene una semana.
+
+\subsubsection*{Inciso d}
+
+Para limpiar la base de datos se realizaron los siguientes cambios:
+
+\begin{itemize}
+  \item Se eliminaron las columnas que existían solo en una de las bases fusionadas, para
+        garantizar uniformidad.
+  \item Se transformó la variable MAS\_500 en binaria, asignando 1 si el aglomerado tiene
+        más de 500.000 habitantes y 0 en caso contrario.
+  \item Se estableció que si la persona es menor de dos años (CH09 = 3) o nunca asistió a un
+        establecimiento educativo (CH10 = 3), entonces no aprobó ningún nivel educativo
+        (CH14 = 0), reemplazando así los valores nulos.
+  \item Se ajustaron las variables CH15\_COD y CH16\_COD, que solo deben tomar valores si
+        CH15 o CH16 son 3, 4 o 5, asignándoles 0 en los demás casos (que interpretamos como
+        ``pregunta no aplica'').
+  \item Se ajustó PP04B\_COD para que solo tome valores si PP04A es 3, reemplazando los
+        valores nulos por 0.
+  \item Se ajustó PP06H para que solo tome valores si PP06E es 2 o 3, reemplazando los
+        valores nulos por 0.
+  \item Se convirtieron en variables binarias PP05F, asignando 1 si el negocio trabaja con
+        un solo cliente y 2 si trabaja con múltiples clientes, y PP07F5 y PP07G\_59,
+        asignando 1 si la respuesta es afirmativa.
+  \item Se reemplazaron por 0 los valores faltantes en variables que solo aplican a personas
+        ocupadas o desocupadas, cuando el individuo no pertenece a esa categoría, para
+        disminuir la cantidad de valores nulos.
+  \item Se eliminaron variables no necesarias: IMPUTA (sin observaciones), PP09A,
+        PP09A\_ESP, PP09B, PP09C y PP09C\_ESP (dependientes de otras variables o aplicables
+        solo a ciertas regiones).
+  \item Se convirtieron a enteros las variables que deberían tener valores discretos,
+        excluyendo los montos de ingreso y la variable CODUSU (el código que distingue
+        viviendas).
+  \item Se garantizó que las variables de ingreso fueran de tipo \textit{float}, para
+        preservar precisión en los cálculos.
+\end{itemize}
+
+\subsubsection*{Inciso e}
+
+Luego de la limpieza, el heatmap de valores faltantes se ve como muestra la
+Figura~\ref{fig:heatmap-post}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{{Heatmap 2}.png}
+  \caption{Heatmap de valores faltantes, después de la limpieza.}
+  \label{fig:heatmap-post}
+\end{figure}
+
+En la Figura~\ref{fig:heatmap-post} vemos que con la limpieza se logró reemplazar casi todos
+los valores faltantes, con la excepción de aquellos de la columna CH14 (último año escolar
+aprobado). Si bien se hizo inferencia respecto de algunas personas que no habían aprobado
+ningún año ---como los menores de dos años, que aún no están en edad escolar, y aquellos que
+reportaron nunca haber asistido a una institución educativa---, el resto de los casos no
+admitía una imputación razonable y se conservaron como faltantes.
+
+% ===============================================================
+\section*{Parte II: Primer análisis exploratorio}
+% ===============================================================
+
+\subsection*{Ejercicio 3}
+
+La Figura~\ref{fig:sexo} ilustra la comparación de la cantidad de hombres y mujeres en 2004 y
+2024, lo que permite observar cómo evolucionó la composición por sexo a lo largo del tiempo.
+
+En 2004 se registraron aproximadamente 2291 hombres y 2530 mujeres, es decir, una diferencia
+de 239 personas a favor de las mujeres. En 2024 se observan alrededor de 2143 hombres y 2370
+mujeres, lo que da nuevamente una brecha a favor de las mujeres, esta vez de 227 personas.
+Cabe destacar que se presenta una leve disminución respecto de la diferencia previa. Además,
+tanto en hombres como en mujeres hay una reducción de la cantidad de observaciones entre 2004
+y 2024. En definitiva, la composición por sexo experimenta variaciones relativamente
+pequeñas en el período.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{{Grafico barras 1}.png}
+  \caption{Composición por sexo en 2004 y 2024.}
+  \label{fig:sexo}
+\end{figure}
+
+\subsection*{Ejercicio 4}
+
+Las Figuras~\ref{fig:matriz2004} y~\ref{fig:matriz2024} presentan las matrices de correlación
+para 2004 y 2024 entre las variables CH04 (sexo), CH06 (edad), CH07 (estado conyugal), CH08
+(cobertura médica), NIVEL\_ED (nivel educativo), ESTADO (ocupado, desocupado, inactivo),
+CAT\_INAC (categoría de inactividad) e IPCF (ingreso per cápita familiar).
+
+En ambos años, CH04 (sexo) muestra correlaciones bajas con el resto de las variables, lo que
+indica que ser hombre o mujer no tiene una asociación significativa con factores como la
+edad, el nivel educativo o el ingreso familiar. Asimismo, CH07 (estado conyugal) mantiene
+correlaciones débiles con las otras variables, lo que sugiere que el estado civil no está
+fuertemente vinculado con la educación o el empleo. Por su parte, la relación entre CH06
+(edad) y CAT\_INAC sigue siendo positiva, lo que confirma que a medida que aumenta la edad
+también lo hace la probabilidad de ser inactivo (jubilado, estudiante, etc.).
+
+En relación con CH08 (cobertura médica), en ambas matrices se observa una correlación
+positiva con NIVEL\_ED y con IPCF, lo que indica que a mayor nivel educativo y mayores
+ingresos es más probable contar con cobertura médica. En 2024 esta relación se intensifica, lo
+que sugiere que el acceso a la salud depende cada vez más de factores económicos y
+educativos. Es importante señalar que la correlación negativa que se observa en la matriz no
+implica una relación inversa, sino que depende de la codificación de la variable, donde
+valores más bajos indican una mejor cobertura. Además, la relación entre NIVEL\_ED e IPCF,
+aunque sigue siendo positiva, disminuyó en 2024, lo que refleja posibles cambios en la
+estructura del mercado laboral o en la accesibilidad de los ingresos para los niveles
+educativos más altos.
+
+Por otro lado, ESTADO (condición de actividad) mantiene una correlación negativa con
+CAT\_INAC, ya que una persona no puede ser activa e inactiva al mismo tiempo, y esta relación
+se mantiene estable en 2024. La correlación entre ESTADO e IPCF sigue siendo baja en ambos
+años, lo que puede explicarse porque los hogares tienen otras fuentes de ingresos además del
+empleo individual. Finalmente, CAT\_INAC se correlaciona negativamente tanto con ESTADO como
+con CH06 (edad), lo que reafirma que la inactividad está estrechamente relacionada con la
+edad y la condición laboral. En general, las matrices reflejan cambios en la dinámica laboral
+y social en estas dos décadas, con una mayor dependencia del nivel educativo y de los
+ingresos para el acceso a bienes y servicios como la cobertura médica.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.72\textwidth]{{Matriz 2004}.png}
+  \caption{Matriz de correlación, 2004.}
+  \label{fig:matriz2004}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.72\textwidth]{{Matriz 2024}.png}
+  \caption{Matriz de correlación, 2024.}
+  \label{fig:matriz2024}
+\end{figure}
+
+% ===============================================================
+\section*{Parte III: Conociendo a los ocupados y desocupados}
+% ===============================================================
+
+\subsection*{Ejercicio 5}
+
+Hay 323 desocupados y 5090 inactivos en la muestra. La media del ingreso per cápita familiar
+es de 96894.0 para los ocupados, 33435.31 para los desocupados y 66566.35 para los inactivos.
+
+\subsection*{Ejercicio 6}
+
+Hay 6 personas en la muestra que no respondieron sobre su condición de actividad, todas
+en 2024.
+
+\subsection*{Ejercicio 7}
+
+La Figura~\ref{fig:pea} muestra la distribución entre población económicamente activa y no
+activa. Podemos ver que hay más personas no activas que activas, lo que puede deberse a la
+gran cantidad de niños presentes en la muestra. Se aprecia también una disminución de la
+cantidad de observaciones entre 2004 y 2024.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{{Grafico barras 2}.png}
+  \caption{Composición por PEA, 2004 y 2024.}
+  \label{fig:pea}
+\end{figure}
+
+\subsection*{Ejercicio 8}
+
+La Figura~\ref{fig:pet} muestra la distribución entre personas en edad laboral y fuera de la
+edad laboral. Vemos que la mayor parte de la muestra, en ambos años, está en edad laboral.
+Sin embargo, esto no significa que efectivamente estén ocupados ni que estén buscando
+trabajo. Comparando con la figura anterior, muchas personas en edad laboral no están buscando
+trabajo, lo que puede deberse a que sean estudiantes o a que pertenezcan a otra categoría de
+inactividad.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{{Grafico barras 3}.png}
+  \caption{Composición por PET, 2004 y 2024.}
+  \label{fig:pet}
+\end{figure}
+
+\subsection*{Ejercicio 9}
+
+En la muestra, la desocupación bajó en 2024 respecto de 2004: hubo 223 desocupados en 2004 y
+100 en 2024.
+
+\subsubsection*{Inciso a}
+
+La Figura~\ref{fig:educacion} muestra las proporciones de desocupados por nivel educativo en
+2004 y 2024, y permite observar cambios importantes en la relación entre el nivel educativo y
+la desocupación a lo largo del tiempo. Para calcular estas proporciones se contó a los
+desocupados de cada grupo y se dividió por la población económicamente activa del mismo
+grupo, de modo de dejar de lado a las personas inactivas. Un ejemplo de esto serían los niños
+que no terminaron la primaria porque están aún en edad escolar.
+
+Los principales resultados son los siguientes:
+
+\begin{itemize}
+  \item Entre las personas económicamente activas con nivel educativo \textbf{primaria
+        incompleta}, el 15.25\% estaba desocupado en 2024, frente al 3.61\% en 2004.
+  \item Con \textbf{primaria completa}, el 1.76\% en 2024, frente al 8.08\% en 2004.
+  \item Con \textbf{secundaria incompleta}, el 6.26\% en 2024, frente al 13.79\% en 2004.
+  \item Con \textbf{secundaria completa}, el 4.59\% en 2024, frente al 11.09\% en 2004.
+  \item Con \textbf{universitaria incompleta}, el 5.76\% en 2024, frente al 15.86\% en 2004.
+  \item Con \textbf{universitaria completa}, el 2.89\% en 2024, frente al 7.58\% en 2004.
+  \item \textbf{Sin instrucción}, el 0.0\% en 2024, frente al 20.0\% en 2004. Esta gran
+        reducción se explica principalmente por el hecho de que en 2024 solo dos personas de
+        la muestra reportaron nivel educativo ``sin instrucción''.
+\end{itemize}
+
+En general, la desocupación disminuyó entre 2004 y 2024 en casi todos los niveles educativos,
+lo que indica un mejor panorama laboral. La única excepción es primaria incompleta, donde la
+proporción de desocupados aumentó, posiblemente por mayores exigencias del mercado laboral
+para los niveles de calificación más bajos. La mejora fue más notable en los niveles más
+altos de educación (universitaria completa e incompleta). Este análisis destaca la importancia
+de la educación en la inserción laboral, con una clara ventaja para quienes poseen niveles
+educativos más altos. Sin embargo, es importante considerar el reducido tamaño de la muestra
+en cada nivel.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{{Grafico barras 4}.png}
+  \caption{Proporción de desocupados por nivel educativo, 2004 y 2024.}
+  \label{fig:educacion}
+\end{figure}
+
+\subsubsection*{Inciso b}
+
+La Figura~\ref{fig:edad} compara las tasas de desocupación por grupo etario en 2004 y 2024, y
+permite observar cómo la desocupación afecta a distintas edades y cómo cambiaron estas
+proporciones a lo largo del tiempo.
+
+\begin{itemize}
+  \item \textbf{Grupos sin participación económica}: no hay personas económicamente activas
+        en los grupos de 0 a 9 años ni de 90 a 99 años en ninguno de los dos años
+        analizados, lo cual es consistente con lo esperado.
+
+  \item \textbf{Desocupación en los jóvenes}: en 2004, los jóvenes de 10 a 19 y de 20 a 29
+        años presentan las tasas más altas de desocupación, con valores de 19.05\% y
+        19.19\% respectivamente. Esto podría deberse a la falta de experiencia laboral y a la
+        transición de los estudios al empleo. En 2024 las tasas de estos grupos disminuyen
+        considerablemente, a 5.88\% y 9.75\%. Aunque siguen siendo relativamente altas en
+        comparación con otros grupos, la reducción es notable.
+
+  \item \textbf{Desocupación en los adultos}: en 2004, los adultos de 30 a 49 años presentan
+        tasas moderadas (7.23\% para 30 a 39 años y 7.02\% para 40 a 49 años), lo que refleja
+        una etapa de mayor estabilidad laboral que la de los grupos más jóvenes. En 2024
+        estas tasas se reducen a 3.79\% y 3.68\% respectivamente, lo que indica un panorama
+        más favorable para los adultos en edad productiva.
+
+  \item \textbf{Desocupación en los adultos mayores}: en 2004, los grupos de 50 a 59, 60 a 69
+        y 70 a 79 años tienen tasas relativamente bajas: 5.52\%, 5.15\% y 4.76\%
+        respectivamente. En 2024 estas tasas disminuyen a 2.05\% y 2.25\% en los dos primeros
+        grupos, mientras que en el de 70 a 79 años sube levemente a 4.35\%. Esto podría
+        deberse a una menor participación activa de estos grupos en el mercado laboral.
+        Para ambos años no hay desocupados en el grupo de 80 a 89, aunque sí hay personas
+        económicamente activas, probablemente porque a esa edad quienes siguen en el mercado
+        laboral lo hacen por decisión propia y podrían pasar a ser inactivos si lo desearan.
+\end{itemize}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{{Grafico barras 5}.png}
+  \caption{Proporción de desocupados por edad, 2004 y 2024.}
+  \label{fig:edad}
+\end{figure}
+
+\subsubsection*{Inciso c}
+
+La Figura~\ref{fig:conyugal} presenta las tasas de desocupación por estado civil entre 2004 y
+2024, que revelan diferencias significativas según la categoría y un descenso generalizado de
+la desocupación en el período.
+
+\begin{itemize}
+  \item \textbf{Unido/a}: 3.77\% de desocupados entre los económicamente activos en 2024,
+        frente al 7.89\% en 2004.
+  \item \textbf{Casado/a}: 2.31\% en 2024, frente al 5.59\% en 2004.
+  \item \textbf{Separado/a o divorciado/a}: 3.49\% en 2024, frente al 10.06\% en 2004.
+  \item \textbf{Viudo/a}: 6.82\% en 2024, frente al 5.66\% en 2004.
+  \item \textbf{Soltero/a}: 7.46\% en 2024, frente al 19.08\% en 2004.
+\end{itemize}
+
+Se puede apreciar que la disminución de la desocupación es notable en todas las categorías
+entre 2004 y 2024, salvo un leve aumento en la categoría viudo/a. Además, las personas
+solteras y separadas o divorciadas son más vulnerables a la desocupación en ambos años,
+posiblemente debido a factores como una menor estabilidad económica o social. Por último, las
+personas casadas presentan las tasas más bajas de desocupación en ambos períodos, lo que
+puede estar asociado a mayores redes de apoyo o a una mayor estabilidad laboral.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\textwidth]{{Grafico barras 6}.png}
+  \caption{Proporción de desocupados por estado conyugal, 2004 y 2024.}
+  \label{fig:conyugal}
+\end{figure}
+
+\subsection*{Ejercicio 10}
+
+La Figura~\ref{fig:tasas} muestra la comparación entre dos tipos de tasas de desocupación
+para 2004 y 2024: la calculada según la definición del INDEC y una tasa alternativa basada en
+la economía laboral.
+
+\paragraph{Tasa de desocupación del INDEC.}
+En 2004 fue del 5.26\%, mientras que en 2024 disminuyó al 2.36\%. Esto refleja una reducción
+significativa en el porcentaje de desocupados en relación con la población económicamente
+activa (PEA), lo que podría estar vinculado a una mejora en las condiciones laborales o a
+cambios en la estructura económica.
+
+\paragraph{Tasa de desocupación alternativa.}
+En 2004 fue del 3.65\%, y disminuyó al 1.64\% en 2024. Este cálculo utiliza como base la
+población en edad de trabajar (PET), lo que implica un indicador más amplio, al no depender
+exclusivamente de la decisión de participar en el mercado laboral.
+
+La tasa del INDEC tiene varias ventajas. En primer lugar, se centra exclusivamente en la
+población activa, lo que permite un indicador ajustado a las personas que efectivamente están
+buscando empleo. Además, al ser una medida estándar utilizada internacionalmente, facilita
+comparaciones entre distintas regiones o países, lo que la convierte en una herramienta
+práctica para el análisis global del mercado laboral. Sin embargo, también presenta
+desventajas: puede estar sesgada por la decisión endógena de las personas de participar en el
+mercado laboral. Esto significa que, si la participación en la PEA disminuye, la tasa podría
+aparentar una mejora aunque las condiciones laborales no necesariamente hayan mejorado.
+
+Por otro lado, la tasa alternativa considera a toda la población en edad de trabajar,
+eliminando el sesgo asociado a las decisiones individuales de participar o no en el mercado
+laboral. Esto permite una visión más inclusiva y amplia de las condiciones laborales de la
+economía. Su desventaja es que incluye a individuos que no buscan empleo por elección, lo que
+podría dar una percepción inflada de la gravedad de la desocupación en ciertos contextos.
+
+Ambas tasas tienen utilidad según el enfoque que se desee analizar, y combinarlas puede
+proporcionar una evaluación más integral del mercado laboral. La diferencia entre ambas
+sugiere que la medición alternativa proporciona una visión más conservadora del problema, ya
+que reparte los desocupados sobre una base poblacional mayor y, por lo tanto, arroja niveles
+sistemáticamente más bajos que la tasa oficial.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{{Grafico barras 7}.png}
+  \caption{Tasas de desocupación, 2004 y 2024.}
+  \label{fig:tasas}
+\end{figure}
+
+\end{document}

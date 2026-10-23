@@ -1,0 +1,317 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noshorthands,es-nodecimaldot]{babel}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage[hidelinks]{hyperref}
+
+% Las figuras y tablas se generan en ../output/
+\graphicspath{{../output/}}
+
+\setlist[itemize]{itemsep=2pt,topsep=4pt}
+\captionsetup{font=small,labelfont=bf}
+
+\begin{document}
+
+\begin{titlepage}
+\centering
+\vspace*{3cm}
+
+{\LARGE\bfseries Trabajo Práctico N$^{\circ}$2\par}
+\vspace{0.4cm}
+{\large (Semestre de Otoño 2025)\par}
+\vspace{0.3cm}
+{\large\bfseries Big Data\par}
+
+\vfill
+
+{\large Profesora: María Noelia Romero\par}
+\vspace{0.2cm}
+{\large Tutor: Tomás Pacheco\par}
+\vspace{0.2cm}
+{\large Alumnos: Catalina Gallardo, Manuel Elorga\par}
+
+\vfill
+\end{titlepage}
+
+% ===============================================================
+\section*{Parte I: Limpieza de la base de datos y la maldición de la multidimensionalidad}
+% ===============================================================
+
+\subsection*{Ejercicio 1}
+
+La base de datos tiene 168 columnas.
+
+\subsection*{Ejercicio 2}
+
+Si convirtiéramos todas las variables categóricas a \textit{dummies}, la base de datos
+tendría 293 columnas.
+
+\subsection*{Ejercicio 3}
+
+Las variables que resultan más relevantes para agrupar a personas desocupadas son:
+
+\begin{itemize}
+  \item Tamaño del aglomerado urbano (MAS\_500).
+  \item Área urbana (AGLOMERADO).
+  \item Sexo (CH04).
+  \item Edad (CH06).
+  \item Estado civil (CH07).
+  \item Cobertura médica (CH08).
+  \item Lugar de nacimiento (CH15).
+  \item Lugar de residencia hace cinco años (CH16).
+  \item Nivel educativo (NIVEL\_ED).
+  \item Indica si trabajó en el último año (PP02I).
+  \item Indica si trabajó alguna vez (PP10D).
+  \item Ingreso per cápita familiar (IPCF).
+\end{itemize}
+
+% ===============================================================
+\section*{Parte II: Clustering}
+% ===============================================================
+
+\subsection*{Ejercicio 2}
+
+\subsubsection*{Inciso a}
+
+Para el análisis de $k$-medias se definieron dos variables centrales:
+
+\begin{itemize}
+  \item \textbf{Educación}: se calcularon los años estándar completados según el nivel
+        educativo (primaria: 6 años; secundaria: 12 años; terciario: 14 años, etc.),
+        ajustando por años aprobados cuando el nivel no estaba finalizado. El resultado es un
+        indicador continuo de formación formal.
+  \item \textbf{Ingreso}: se actualizaron los valores a pesos constantes del primer trimestre
+        de 2024.
+\end{itemize}
+
+A partir de estas dos dimensiones se ejecutó $k$-means con tres valores de $K$, como se ve en
+la Figura~\ref{fig:kmedias}:
+
+\begin{itemize}
+  \item $K = 2$: surge una división clara entre ingresos bajos con menor educación e ingresos
+        altos con mayor formación.
+  \item $K = 4$: es la segmentación más rica, con grupos que van desde muy bajos ingresos y
+        poca educación hasta altos ingresos con formación avanzada.
+  \item $K = 10$: se observa una fragmentación fina que captura diferencias sutiles, pero con
+        mayor riesgo de ruido y menor interpretabilidad.
+\end{itemize}
+
+En resumen, $K = 2$ y $K = 4$ ofrecen agrupaciones claras y útiles, mientras que $K = 10$
+aporta más detalle a costa de simplicidad y robustez analítica.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{{k-medias}.png}
+  \caption{Análisis de $k$-medias con $K=2$, $K=4$ y $K=10$.}
+  \label{fig:kmedias}
+\end{figure}
+
+\subsubsection*{Inciso b}
+
+El algoritmo $k$-means con $K = 2$ logra separar parcialmente a las personas ocupadas de las
+desocupadas, principalmente en función del ingreso y de los años de educación. Se observa que
+las personas con mayores ingresos y más educación tienden a agruparse en un mismo clúster,
+que generalmente corresponde a los ocupados. Sin embargo, hay un solapamiento considerable:
+algunos desocupados tienen características similares a las de los ocupados y viceversa. Esto
+muestra que el algoritmo capta ciertas diferencias estructurales, pero no clasifica con
+precisión la condición laboral, ya que no considera otros factores relevantes.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{{kmedias_comparacion}.png}
+  \caption{Análisis de $k$-medias con $K=2$, según condición de ocupación.}
+  \label{fig:kmedias2}
+\end{figure}
+
+\subsection*{Ejercicio 3}
+
+En este ejercicio se aplica un análisis de clustering jerárquico aglomerativo sobre las
+personas desocupadas de la base \texttt{respondieron}, con el objetivo de identificar
+subgrupos o patrones homogéneos dentro de la muestra sin necesidad de definir de antemano un
+número óptimo de grupos.
+
+Un dendrograma es un diagrama en forma de árbol que muestra cómo, paso a paso, se van uniendo
+objetos en un análisis de clustering jerárquico. En el eje vertical se representa la distancia
+o disimilitud a la que se fusionan primero pares de observaciones, luego grupos sucesivamente
+mayores, hasta formar un único clúster. Así, las uniones más bajas indican alta similitud y
+las más altas revelan diferencias mayores entre los grupos.
+
+La Figura~\ref{fig:dendograma} muestra primero fusiones a muy baja distancia, lo que indica
+parejas de individuos con perfiles casi idénticos. A distancias intermedias se forman dos
+grandes ramas: una reúne sobre todo jóvenes sin experiencia ni cobertura, y otra agrupa
+desocupados con algo de trayectoria y seguro médico. Finalmente, dos casos aislados
+(\textit{outliers}) se fusionan al resto a muy alta distancia, lo que señala perfiles
+atípicos. Un corte horizontal a una distancia intermedia permitiría extraer entre cuatro y
+cinco clústeres homogéneos para caracterizar subtipos de desocupación.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{{dendograma}.png}
+  \caption{Clustering jerárquico.}
+  \label{fig:dendograma}
+\end{figure}
+
+% ===============================================================
+\section*{Parte III: Histogramas y kernels}
+% ===============================================================
+
+\subsection*{Ejercicio 1}
+
+La Figura~\ref{fig:histograma} compara la distribución del ingreso individual (P47T) en 2004
+y 2024. Para no sesgar el análisis se excluyó de la muestra el cuantil más alto, de modo de
+dejar fuera a las personas con ingresos demasiado grandes. No se excluyen los datos del
+primer cuantil, ya que la distribución está sesgada hacia la izquierda: hay muchos ingresos
+muy bajos.
+
+En ambos histogramas se optó por utilizar 30 bins, para poder identificar todo tipo de picos,
+asimetrías y modas de los ingresos. Dado que tenemos miles de observaciones, esa cantidad
+asegura que cada bin contenga un número significativo de casos. Además, se utilizó la misma
+cantidad de bins para ambos años, para facilitar la comparación.
+
+Se observa que la distribución de 2004 presenta una mayor cantidad de ingresos bajos. En
+cambio, en 2024 la distribución se orienta hacia la derecha, lo que refleja un incremento de
+los ingresos individuales. Además, se puede observar una mayor heterogeneidad de los datos, ya
+que hay una gran dispersión con una mayor cantidad de valores.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{{histograma}.png}
+  \caption{Distribución del ingreso individual, 2004 y 2024.}
+  \label{fig:histograma}
+\end{figure}
+
+\subsection*{Ejercicio 2}
+
+Para este ejercicio se creó una nueva base de datos llamada \texttt{hogares}, utilizando la
+variable CODUSU que identifica a cada hogar. En esa base se agregaron la variable binaria
+\texttt{hay\_desocupado}, que indica si hay al menos un desocupado en el hogar, y la variable
+\texttt{ingreso\_hogar}, que indica el ingreso total del hogar.
+
+\subsubsection*{Inciso c}
+
+En la Figura~\ref{fig:unif2004} (2004), los hogares con al menos una persona desocupada
+(línea roja) concentran su densidad en ingresos bajos, con mayor variabilidad reflejada en
+picos pequeños. En contraste, los hogares con todos sus miembros ocupados (línea verde)
+presentan ingresos promedio más altos, con una distribución más uniforme y menos
+oscilaciones.
+
+En la Figura~\ref{fig:unif2024} (2024), los hogares con desocupados mantienen su
+concentración en ingresos bajos, pero con un rango más amplio y mayor dispersión, lo que
+indica una desigualdad interna persistente. Los hogares con todos ocupados siguen mostrando
+ingresos más altos y un incremento general respecto de 2004, aunque la diferencia con los
+hogares con desocupados se mantiene marcada.
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{distribucion2004}.png}
+    \caption{Ingreso por hogar con kernel uniforme, 2004.}
+    \label{fig:unif2004}
+  \end{minipage}\hfill
+  \begin{minipage}{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{distribucion2024}.png}
+    \caption{Ingreso por hogar con kernel uniforme, 2024.}
+    \label{fig:unif2024}
+  \end{minipage}
+\end{figure}
+
+\subsubsection*{Inciso d}
+
+El ancho de banda es el tamaño de la ``ventana'' que utilizamos para calcular cuánto influyen
+unos datos sobre otros, de manera que el resultado sea lo más preciso posible. Para elegir
+cuál es el mejor ancho de banda debemos considerar un \textit{trade-off} entre sesgo y
+varianza.
+
+Si elegimos un ancho de banda muy grande, estamos promediando demasiados puntos y se pierden
+detalles importantes. En cambio, si el ancho de banda es muy pequeño, la estimación se ajusta
+demasiado a cada punto, lo que significa que se concentra en exceso en las variaciones
+individuales.
+
+El ancho de banda óptimo es ese valor intermedio en el que compensamos la pérdida de detalle
+(sesgo) y el exceso de variaciones (varianza), para aproximarnos lo mejor posible a la
+verdadera forma de los datos.
+
+\subsubsection*{Inciso e}
+
+La diferencia porcentual en ingresos entre hogares con todos sus miembros ocupados y hogares
+con desocupados disminuyó del 38\% en 2004 al 27\% en 2024, lo que indica una reducción en la
+brecha relativa entre ambos grupos. Esto podría reflejar mejoras en los ingresos de los
+hogares con desocupados, un crecimiento más lento en los ingresos de los hogares ocupados, o
+cambios en las dinámicas laborales y sociales que mitigaron parcialmente el impacto de la
+desocupación. Sin embargo, aunque la brecha relativa se redujo, sigue siendo significativa.
+
+\subsection*{Ejercicio 3}
+
+\subsubsection*{Inciso a}
+
+En la Figura~\ref{fig:gauss2004}, la curva de los hogares con desocupados (línea roja) se
+encuentra desplazada hacia la izquierda respecto de la de los hogares sin desocupados (línea
+verde). Esto sugiere que los primeros presentan ingresos más bajos. A su vez, los hogares sin
+desocupados muestran una mayor dispersión hacia ingresos más elevados.
+
+En la Figura~\ref{fig:gauss2024}, los hogares con desocupados tienden a concentrarse en los
+niveles más bajos de ingreso. Sin embargo, podemos ver que ambas distribuciones aparecen más
+suavizadas y desplazadas hacia la derecha respecto de 2004, lo que refleja un aumento general
+de los ingresos.
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{distribuciong2004}.png}
+    \caption{Ingreso por hogar con kernel gaussiano, 2004.}
+    \label{fig:gauss2004}
+  \end{minipage}\hfill
+  \begin{minipage}{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{distribuciong2024}.png}
+    \caption{Ingreso por hogar con kernel gaussiano, 2024.}
+    \label{fig:gauss2024}
+  \end{minipage}
+\end{figure}
+
+En la Figura~\ref{fig:epa2004}, el uso del kernel de Epanechnikov genera picos más marcados y
+cambios más bruscos en la densidad. Igualmente, llegamos a la misma conclusión: los hogares
+con desocupados tienen menores ingresos, con una curva más centrada a la izquierda.
+
+En la Figura~\ref{fig:epa2024}, la estimación es más irregular que la gaussiana. Nuevamente,
+los hogares sin desocupados presentan ingresos más altos y una densidad más dispersa,
+mientras que los hogares con desocupados se concentran en los rangos inferiores de ingresos.
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{distribucione2004}.png}
+    \caption{Ingreso por hogar con kernel de Epanechnikov, 2004.}
+    \label{fig:epa2004}
+  \end{minipage}\hfill
+  \begin{minipage}{0.49\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{{distribucione2024}.png}
+    \caption{Ingreso por hogar con kernel de Epanechnikov, 2024.}
+    \label{fig:epa2024}
+  \end{minipage}
+\end{figure}
+
+\subsubsection*{Inciso b}
+
+El kernel gaussiano genera curvas más suaves y continuas, ya que asigna peso a todos los
+puntos del dominio. Permite capturar la tendencia general de la distribución del ingreso sin
+cambios abruptos y muestra colas más prolongadas.
+
+Por otro lado, el kernel de Epanechnikov produce colas más segmentadas y con cambios más
+abruptos. Es por esto que la estimación resulta más sensible a pequeñas concentraciones de
+datos, en las que se visualizan picos más marcados.
+
+\end{document}
