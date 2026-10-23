@@ -1,0 +1,13 @@
+# Versiones con las que se corrio el analisis final.
+# El valor de xmin que elige el paquete powerlaw depende de la version,
+# asi que conviene fijarla para reproducir exactamente los resultados.
+pandas==2.3.3
+numpy==2.2.6
+scikit-learn==1.7.2
+powerlaw==2.0.0
+matplotlib==3.10.9
+seaborn==0.13.2
+# pandas.to_latex(caption=...) pasa por Styler, que requiere jinja2.
+jinja2>=3.1.2
+scipy==1.16.2
+spotipy==2.25.1

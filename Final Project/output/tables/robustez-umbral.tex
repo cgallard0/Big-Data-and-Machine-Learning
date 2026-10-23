@@ -1,0 +1,16 @@
+\begin{table}[htbp]
+\caption{Desempeño del Random Forest sobre atributos acústicos según el umbral de popularidad usado para definir un hit. La última columna es la proporción de aciertos de una regla que nunca predice un hit.}
+\label{tab:robustez}
+\begin{tabular}{rrrr}
+\toprule
+Umbral & Positivos (\%) & AUC & Aciertos triviales \\
+\midrule
+30 & 34.097 & 0.707 & 0.659 \\
+40 & 19.645 & 0.718 & 0.804 \\
+52 & 8.530 & 0.724 & 0.915 \\
+60 & 3.851 & 0.736 & 0.961 \\
+70 & 1.027 & 0.725 & 0.990 \\
+80 & 0.201 & 0.681 & 0.998 \\
+\bottomrule
+\end{tabular}
+\end{table}

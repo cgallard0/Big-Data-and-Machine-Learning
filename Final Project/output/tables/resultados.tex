@@ -1,0 +1,13 @@
+\begin{table}[htbp]
+\caption{Desempeño en la muestra de testeo para identificar canciones del top 1\% de popularidad en 2019. El umbral de clasificación de cada modelo se calibra a la tasa base de positivos.}
+\label{tab:resultados}
+\begin{tabular}{lrrrrr}
+\toprule
+Modelo & Accuracy & Precision & Recall & F1 & AUC \\
+\midrule
+Ley de potencia & 0.995 & 0.706 & 0.816 & 0.757 & 0.997 \\
+Random Forest & 0.980 & 0.048 & 0.051 & 0.049 & 0.761 \\
+RF + popularidad pasada & 0.995 & 0.744 & 0.748 & 0.746 & 0.986 \\
+\bottomrule
+\end{tabular}
+\end{table}
